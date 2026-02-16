@@ -1,87 +1,82 @@
 import { Request, Response } from 'express';
-import {
-  isMissingKeys,
-  isUUID,
-  parseForResponse,
-} from '../shared/helpers';
+import { parseForResponse } from '../shared/helpers';
 import { Errors } from '../shared/errors';
-import { prisma } from '../database';
+import { CreateAssignmentDTO } from '../dtos/createAssignmentDTO';
+import { AssignmentService } from '../services/assignmentsService';
+import { GetAssignmentByIdDTO } from '../dtos/getAssignmentByIdDTO';
 
 export class AssignmentController {
-  constructor() {}
+  constructor(private assignmentService: AssignmentService) {}
 
   public createAssignment = async (req: Request, res: Response) => {
     try {
-      if (isMissingKeys(req.body, ['classId', 'title'])) {
-        return res.status(400).json({
-          error: Errors.ValidationError,
-          data: undefined,
-          success: false,
-        });
-      }
+      const dto = CreateAssignmentDTO.validateRequest(req.body);
 
-      const { classId, title } = req.body;
+      const assignment =
+        await this.assignmentService.createAssignment(dto);
 
-      const assignment = await prisma.assignment.create({
-        data: {
-          classId,
-          title,
-        },
-      });
-
-      res.status(201).json({
+      return res.status(201).json({
         error: undefined,
         data: parseForResponse(assignment),
         success: true,
       });
     } catch (error) {
-      res.status(500).json({
-        error: Errors.ServerError,
-        data: undefined,
-        success: false,
-      });
+      switch (error.message) {
+        case Errors.ValidationError: {
+          return res.status(400).json({
+            error: Errors.ValidationError,
+            data: undefined,
+            success: false,
+          });
+        }
+
+        default: {
+          return res.status(500).json({
+            error: Errors.ServerError,
+            data: undefined,
+            success: false,
+          });
+        }
+      }
     }
   };
 
   public getAssignmentById = async (req: Request, res: Response) => {
     try {
-      const { id } = req.params;
-      if (!isUUID(id)) {
-        return res.status(400).json({
-          error: Errors.ValidationError,
-          data: undefined,
-          success: false,
-        });
-      }
-      const assignment = await prisma.assignment.findUnique({
-        include: {
-          class: true,
-          studentTasks: true,
-        },
-        where: {
-          id,
-        },
-      });
+      const dto = GetAssignmentByIdDTO.validateRequest(req.params);
 
-      if (!assignment) {
-        return res.status(404).json({
-          error: Errors.AssignmentNotFound,
-          data: undefined,
-          success: false,
-        });
-      }
+      const assignment =
+        await this.assignmentService.getAssignmentById(dto);
 
-      res.status(200).json({
+      return res.status(200).json({
         error: undefined,
         data: parseForResponse(assignment),
         success: true,
       });
     } catch (error) {
-      res.status(500).json({
-        error: Errors.ServerError,
-        data: undefined,
-        success: false,
-      });
+      switch (error.message) {
+        case Errors.ValidationError: {
+          return res.status(400).json({
+            error: Errors.ValidationError,
+            data: undefined,
+            success: false,
+          });
+        }
+        case Errors.AssignmentNotFound: {
+          return res.status(404).json({
+            error: Errors.AssignmentNotFound,
+            data: undefined,
+            success: false,
+          });
+        }
+        default: {
+          return res.status(500).json({
+            error: Errors.ServerError,
+            data: undefined,
+            success: false,
+          });
+        }
+      }
     }
   };
 }
