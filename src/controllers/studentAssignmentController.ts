@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { isMissingKeys, parseForResponse } from '../shared/helpers';
-import { Errors } from '../shared/errors';
+import { ErrorExceptionType } from '../shared/errorExceptionTypes';
 import { prisma } from '../database';
 
 export class StudentAssignmentController {
@@ -13,7 +13,7 @@ export class StudentAssignmentController {
     try {
       if (isMissingKeys(req.body, ['studentId', 'assignmentId'])) {
         return res.status(400).json({
-          error: Errors.ValidationError,
+          error: ErrorExceptionType.ValidationError,
           data: undefined,
           success: false,
         });
@@ -30,7 +30,7 @@ export class StudentAssignmentController {
 
       if (!student) {
         return res.status(404).json({
-          error: Errors.StudentNotFound,
+          error: ErrorExceptionType.StudentNotFound,
           data: undefined,
           success: false,
         });
@@ -45,7 +45,7 @@ export class StudentAssignmentController {
 
       if (!assignment) {
         return res.status(404).json({
-          error: Errors.AssignmentNotFound,
+          error: ErrorExceptionType.AssignmentNotFound,
           data: undefined,
           success: false,
         });
@@ -67,7 +67,7 @@ export class StudentAssignmentController {
       });
     } catch (error) {
       res.status(500).json({
-        error: Errors.ServerError,
+        error: ErrorExceptionType.ServerError,
         data: undefined,
         success: false,
       });
@@ -81,7 +81,7 @@ export class StudentAssignmentController {
     try {
       if (isMissingKeys(req.body, ['id'])) {
         return res.status(400).json({
-          error: Errors.ValidationError,
+          error: ErrorExceptionType.ValidationError,
           data: undefined,
           success: false,
         });
@@ -99,7 +99,7 @@ export class StudentAssignmentController {
 
       if (!studentAssignment) {
         return res.status(404).json({
-          error: Errors.AssignmentNotFound,
+          error: ErrorExceptionType.AssignmentNotFound,
           data: undefined,
           success: false,
         });
@@ -122,7 +122,7 @@ export class StudentAssignmentController {
       });
     } catch (error) {
       res.status(500).json({
-        error: Errors.ServerError,
+        error: ErrorExceptionType.ServerError,
         data: undefined,
         success: false,
       });
@@ -136,7 +136,7 @@ export class StudentAssignmentController {
     try {
       if (isMissingKeys(req.body, ['id', 'grade'])) {
         return res.status(400).json({
-          error: Errors.ValidationError,
+          error: ErrorExceptionType.ValidationError,
           data: undefined,
           success: false,
         });
@@ -147,7 +147,7 @@ export class StudentAssignmentController {
       // validate grade
       if (!['A', 'B', 'C', 'D'].includes(grade)) {
         return res.status(400).json({
-          error: Errors.ValidationError,
+          error: ErrorExceptionType.ValidationError,
           data: undefined,
           success: false,
         });
@@ -163,7 +163,7 @@ export class StudentAssignmentController {
 
       if (!studentAssignment) {
         return res.status(404).json({
-          error: Errors.AssignmentNotFound,
+          error: ErrorExceptionType.AssignmentNotFound,
           data: undefined,
           success: false,
         });
@@ -186,7 +186,7 @@ export class StudentAssignmentController {
       });
     } catch (error) {
       res.status(500).json({
-        error: Errors.ServerError,
+        error: ErrorExceptionType.ServerError,
         data: undefined,
         success: false,
       });

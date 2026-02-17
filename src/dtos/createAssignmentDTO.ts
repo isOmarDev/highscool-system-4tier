@@ -1,4 +1,4 @@
-import { Errors } from '../shared/errors';
+import { InvalidRequestBodyException } from '../shared/exceptions';
 import { isMissingKeys } from '../shared/helpers';
 
 export class CreateAssignmentDTO {
@@ -16,7 +16,7 @@ export class CreateAssignmentDTO {
       isMissingKeys(body, requiredKeys);
 
     if (isRequestInvalid) {
-      throw new Error(Errors.ValidationError);
+      throw new InvalidRequestBodyException(requiredKeys);
     }
 
     const { classId, title } = body as {

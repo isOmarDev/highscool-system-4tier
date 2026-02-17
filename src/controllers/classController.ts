@@ -4,7 +4,7 @@ import {
   isUUID,
   parseForResponse,
 } from '../shared/helpers';
-import { Errors } from '../shared/errors';
+import { ErrorExceptionType } from '../shared/errorExceptionTypes';
 import { prisma } from '../database';
 
 export class ClassController {
@@ -14,7 +14,7 @@ export class ClassController {
     try {
       if (isMissingKeys(req.body, ['name'])) {
         return res.status(400).json({
-          error: Errors.ValidationError,
+          error: ErrorExceptionType.ValidationError,
           data: undefined,
           success: false,
         });
@@ -35,7 +35,7 @@ export class ClassController {
       });
     } catch (error) {
       res.status(500).json({
-        error: Errors.ServerError,
+        error: ErrorExceptionType.ServerError,
         data: undefined,
         success: false,
       });
@@ -50,7 +50,7 @@ export class ClassController {
       const { id } = req.params;
       if (!isUUID(id)) {
         return res.status(400).json({
-          error: Errors.ValidationError,
+          error: ErrorExceptionType.ValidationError,
           data: undefined,
           success: false,
         });
@@ -65,7 +65,7 @@ export class ClassController {
 
       if (!cls) {
         return res.status(404).json({
-          error: Errors.ClassNotFound,
+          error: ErrorExceptionType.ClassNotFound,
           data: undefined,
           success: false,
         });
@@ -88,7 +88,7 @@ export class ClassController {
       });
     } catch (error) {
       res.status(500).json({
-        error: Errors.ServerError,
+        error: ErrorExceptionType.ServerError,
         data: undefined,
         success: false,
       });

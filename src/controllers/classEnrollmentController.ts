@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { isMissingKeys, parseForResponse } from '../shared/helpers';
-import { Errors } from '../shared/errors';
+import { ErrorExceptionType } from '../shared/errorExceptionTypes';
 import { prisma } from '../database';
 
 export class ClassEnrollmentController {
@@ -13,7 +13,7 @@ export class ClassEnrollmentController {
     try {
       if (isMissingKeys(req.body, ['studentId', 'classId'])) {
         return res.status(400).json({
-          error: Errors.ValidationError,
+          error: ErrorExceptionType.ValidationError,
           data: undefined,
           success: false,
         });
@@ -30,7 +30,7 @@ export class ClassEnrollmentController {
 
       if (!student) {
         return res.status(404).json({
-          error: Errors.StudentNotFound,
+          error: ErrorExceptionType.StudentNotFound,
           data: undefined,
           success: false,
         });
@@ -54,7 +54,7 @@ export class ClassEnrollmentController {
 
       if (duplicatedClassEnrollment) {
         return res.status(400).json({
-          error: Errors.StudentAlreadyEnrolled,
+          error: ErrorExceptionType.StudentAlreadyEnrolled,
           data: undefined,
           success: false,
         });
@@ -62,7 +62,7 @@ export class ClassEnrollmentController {
 
       if (!cls) {
         return res.status(404).json({
-          error: Errors.ClassNotFound,
+          error: ErrorExceptionType.ClassNotFound,
           data: undefined,
           success: false,
         });
@@ -82,7 +82,7 @@ export class ClassEnrollmentController {
       });
     } catch (error) {
       res.status(500).json({
-        error: Errors.ServerError,
+        error: ErrorExceptionType.ServerError,
         data: undefined,
         success: false,
       });

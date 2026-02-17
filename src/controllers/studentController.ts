@@ -4,7 +4,7 @@ import {
   isUUID,
   parseForResponse,
 } from '../shared/helpers';
-import { Errors } from '../shared/errors';
+import { ErrorExceptionType } from '../shared/errorExceptionTypes';
 import { prisma } from '../database';
 
 export class StudentController {
@@ -14,7 +14,7 @@ export class StudentController {
     try {
       if (isMissingKeys(req.body, ['name'])) {
         return res.status(400).json({
-          error: Errors.ValidationError,
+          error: ErrorExceptionType.ValidationError,
           data: undefined,
           success: false,
         });
@@ -35,7 +35,7 @@ export class StudentController {
       });
     } catch (error) {
       res.status(500).json({
-        error: Errors.ServerError,
+        error: ErrorExceptionType.ServerError,
         data: undefined,
         success: false,
       });
@@ -61,7 +61,7 @@ export class StudentController {
       });
     } catch (error) {
       res.status(500).json({
-        error: Errors.ServerError,
+        error: ErrorExceptionType.ServerError,
         data: undefined,
         success: false,
       });
@@ -73,7 +73,7 @@ export class StudentController {
       const { id } = req.params;
       if (!isUUID(id)) {
         return res.status(400).json({
-          error: Errors.ValidationError,
+          error: ErrorExceptionType.ValidationError,
           data: undefined,
           success: false,
         });
@@ -91,7 +91,7 @@ export class StudentController {
 
       if (!student) {
         return res.status(404).json({
-          error: Errors.StudentNotFound,
+          error: ErrorExceptionType.StudentNotFound,
           data: undefined,
           success: false,
         });
@@ -104,7 +104,7 @@ export class StudentController {
       });
     } catch (error) {
       res.status(500).json({
-        error: Errors.ServerError,
+        error: ErrorExceptionType.ServerError,
         data: undefined,
         success: false,
       });
@@ -119,7 +119,7 @@ export class StudentController {
       const { id } = req.params;
       if (!isUUID(id)) {
         return res.status(400).json({
-          error: Errors.ValidationError,
+          error: ErrorExceptionType.ValidationError,
           data: undefined,
           success: false,
         });
@@ -134,7 +134,7 @@ export class StudentController {
 
       if (!student) {
         return res.status(404).json({
-          error: Errors.StudentNotFound,
+          error: ErrorExceptionType.StudentNotFound,
           data: undefined,
           success: false,
         });
@@ -158,7 +158,7 @@ export class StudentController {
       });
     } catch (error) {
       res.status(500).json({
-        error: Errors.ServerError,
+        error: ErrorExceptionType.ServerError,
         data: undefined,
         success: false,
       });
@@ -170,7 +170,7 @@ export class StudentController {
       const { id } = req.params;
       if (!isUUID(id)) {
         return res.status(400).json({
-          error: Errors.ValidationError,
+          error: ErrorExceptionType.ValidationError,
           data: undefined,
           success: false,
         });
@@ -185,7 +185,7 @@ export class StudentController {
 
       if (!student) {
         return res.status(404).json({
-          error: Errors.StudentNotFound,
+          error: ErrorExceptionType.StudentNotFound,
           data: undefined,
           success: false,
         });
@@ -212,7 +212,7 @@ export class StudentController {
       });
     } catch (error) {
       res.status(500).json({
-        error: Errors.ServerError,
+        error: ErrorExceptionType.ServerError,
         data: undefined,
         success: false,
       });

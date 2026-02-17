@@ -1,14 +1,18 @@
-import { Request, Response } from 'express';
-import { parseForResponse } from '../shared/helpers';
-import { Errors } from '../shared/errors';
+import { NextFunction, Request, Response } from 'express';
+
 import { CreateAssignmentDTO } from '../dtos/createAssignmentDTO';
-import { AssignmentService } from '../services/assignmentsService';
 import { GetAssignmentByIdDTO } from '../dtos/getAssignmentByIdDTO';
+import { AssignmentService } from '../services/assignmentsService';
+import { parseForResponse } from '../shared/helpers';
 
 export class AssignmentController {
   constructor(private assignmentService: AssignmentService) {}
 
-  public createAssignment = async (req: Request, res: Response) => {
+  public createAssignment = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
     try {
       const dto = CreateAssignmentDTO.validateRequest(req.body);
 
@@ -21,27 +25,15 @@ export class AssignmentController {
         success: true,
       });
     } catch (error) {
-      switch (error.message) {
-        case Errors.ValidationError: {
-          return res.status(400).json({
-            error: Errors.ValidationError,
-            data: undefined,
-            success: false,
-          });
-        }
-
-        default: {
-          return res.status(500).json({
-            error: Errors.ServerError,
-            data: undefined,
-            success: false,
-          });
-        }
-      }
+      next(error);
     }
   };
 
-  public getAssignmentById = async (req: Request, res: Response) => {
+  public getAssignmentById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
     try {
       const dto = GetAssignmentByIdDTO.validateRequest(req.params);
 
@@ -54,29 +46,7 @@ export class AssignmentController {
         success: true,
       });
     } catch (error) {
-      switch (error.message) {
-        case Errors.ValidationError: {
-          return res.status(400).json({
-            error: Errors.ValidationError,
-            data: undefined,
-            success: false,
-          });
-        }
-        case Errors.AssignmentNotFound: {
-          return res.status(404).json({
-            error: Errors.AssignmentNotFound,
-            data: undefined,
-            success: false,
-          });
-        }
-        default: {
-          return res.status(500).json({
-            error: Errors.ServerError,
-            data: undefined,
-            success: false,
-          });
-        }
-      }
+      next(error);
     }
   };
 }
