@@ -14,7 +14,7 @@ class Server {
     this.instance = express();
     this.addMiddlewares();
     this.registerRoutes();
-    this.handleErrorException();
+    this.setupErrorExceptionHandler();
   }
 
   private addMiddlewares() {
@@ -26,7 +26,7 @@ class Server {
     this.instance.use('/assignments', this.assignmentRoutes);
   }
 
-  private handleErrorException() {
+  private setupErrorExceptionHandler() {
     this.instance.use(ErrorExceptionHandler.handle);
   }
 
