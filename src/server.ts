@@ -10,7 +10,11 @@ import ErrorExceptionHandler from './shared/errorExceptionHandler';
 class Server {
   private readonly instance: Application;
 
-  constructor(private assignmentRoutes: Router) {
+  constructor(
+    private assignmentRoutes: Router,
+    private classRoutes: Router,
+    private studentRoutes: Router,
+  ) {
     this.instance = express();
     this.addMiddlewares();
     this.registerRoutes();
@@ -24,6 +28,8 @@ class Server {
 
   private registerRoutes() {
     this.instance.use('/assignments', this.assignmentRoutes);
+    this.instance.use('/classes', this.classRoutes);
+    this.instance.use('/students', this.studentRoutes);
   }
 
   private setupErrorExceptionHandler() {

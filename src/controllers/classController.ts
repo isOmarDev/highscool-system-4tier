@@ -1,32 +1,25 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
+
+import { ClassService } from '../services/classService';
+import { parseForResponse } from '../shared/helpers';
 import {
-  isMissingKeys,
-  isUUID,
-  parseForResponse,
-} from '../shared/helpers';
-import { ErrorExceptionType } from '../shared/errorExceptionTypes';
-import { prisma } from '../database';
+  CreateClassDTO,
+  EnrollStudentDTO,
+  GetClassAssignmentsDTO,
+} from '../dtos/classDTO';
 
 export class ClassController {
-  constructor() {}
+  constructor(private classService: ClassService) {}
 
-  public createClass = async (req: Request, res: Response) => {
+  public createClass = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
     try {
-      if (isMissingKeys(req.body, ['name'])) {
-        return res.status(400).json({
-          error: ErrorExceptionType.ValidationError,
-          data: undefined,
-          success: false,
-        });
-      }
+      const dto = CreateClassDTO.validateRequest(req.body);
 
-      const { name } = req.body;
-
-      const cls = await prisma.class.create({
-        data: {
-          name,
-        },
-      });
+      const cls = await this.classService.createClass(dto);
 
       res.status(201).json({
         error: undefined,
@@ -34,52 +27,19 @@ export class ClassController {
         success: true,
       });
     } catch (error) {
-      res.status(500).json({
-        error: ErrorExceptionType.ServerError,
-        data: undefined,
-        success: false,
-      });
+      next(error);
     }
   };
 
   public getClassAssignments = async (
     req: Request,
     res: Response,
+    next: NextFunction,
   ) => {
     try {
-      const { id } = req.params;
-      if (!isUUID(id)) {
-        return res.status(400).json({
-          error: ErrorExceptionType.ValidationError,
-          data: undefined,
-          success: false,
-        });
-      }
+      const dto = GetClassAssignmentsDTO.validateRequest(req.params);
 
-      // check if class exists
-      const cls = await prisma.class.findUnique({
-        where: {
-          id,
-        },
-      });
-
-      if (!cls) {
-        return res.status(404).json({
-          error: ErrorExceptionType.ClassNotFound,
-          data: undefined,
-          success: false,
-        });
-      }
-
-      const assignments = await prisma.assignment.findMany({
-        where: {
-          classId: id,
-        },
-        include: {
-          class: true,
-          studentTasks: true,
-        },
-      });
+      const assignments = await this.classService.getAssignments(dto);
 
       res.status(200).json({
         error: undefined,
@@ -87,11 +47,28 @@ export class ClassController {
         success: true,
       });
     } catch (error) {
-      res.status(500).json({
-        error: ErrorExceptionType.ServerError,
-        data: undefined,
-        success: false,
+      next(error);
+    }
+  };
+
+  public enrollStudent = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const dto = EnrollStudentDTO.fromRequest(req.body);
+
+      const classEnrollment =
+        await this.classService.enrollStudent(dto);
+
+      res.status(201).json({
+        error: undefined,
+        data: parseForResponse(classEnrollment),
+        success: true,
       });
+    } catch (error) {
+      next(error);
     }
   };
 }

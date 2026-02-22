@@ -1,9 +1,14 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { CreateAssignmentDTO } from '../dtos/createAssignmentDTO';
-import { GetAssignmentByIdDTO } from '../dtos/getAssignmentByIdDTO';
-import { AssignmentService } from '../services/assignmentsService';
+import { AssignmentService } from '../services/assignmentService';
 import { parseForResponse } from '../shared/helpers';
+import {
+  AssignStudentDTO,
+  CreateAssignmentDTO,
+  GetAssignmentByIdDTO,
+  GradeAssignmentDTO,
+  SubmitAssignmentDTO,
+} from '../dtos/assignmentDTO';
 
 export class AssignmentController {
   constructor(private assignmentService: AssignmentService) {}
@@ -43,6 +48,63 @@ export class AssignmentController {
       return res.status(200).json({
         error: undefined,
         data: parseForResponse(assignment),
+        success: true,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public assignStudent = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const dto = AssignStudentDTO.fromRequest(req.body);
+      const data = await this.assignmentService.assignStudent(dto);
+
+      res.status(200).json({
+        error: undefined,
+        data: parseForResponse(data),
+        success: true,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public submitAssignment = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const dto = SubmitAssignmentDTO.fromRequest(req.body);
+      const data = await this.assignmentService.submitAssignment(dto);
+
+      res.status(200).json({
+        error: undefined,
+        data: parseForResponse(data),
+        success: true,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public gradeAssignment = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const dto = GradeAssignmentDTO.fromRequest(req.body);
+      const data = await this.assignmentService.gradeAssignment(dto);
+
+      res.status(200).json({
+        error: undefined,
+        data: parseForResponse(data),
         success: true,
       });
     } catch (error) {

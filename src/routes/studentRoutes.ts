@@ -1,9 +1,15 @@
 import { Router } from 'express';
+import { prisma } from '../database';
+
 import { StudentController } from '../controllers/studentController';
+import { StudentDatabase } from '../persistence/studentDatabase';
+import { StudentService } from '../services/studentService';
 
 const router = Router();
 
-const studentController = new StudentController();
+const studentDatabase = new StudentDatabase(prisma);
+const studentService = new StudentService(studentDatabase);
+const studentController = new StudentController(studentService);
 
 // POST create student
 router.post('/', studentController.createStudent);
