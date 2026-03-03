@@ -3,7 +3,7 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "target": "esnext",
-    "types": ["node", "jest"],
+    "types": ["node", "jest", "jest-cucumber", "@faker-js/faker"],
     "outDir": "build",
 
     "sourceMap": true,
